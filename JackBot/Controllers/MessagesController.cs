@@ -22,7 +22,13 @@ namespace JackBot
         /// 
         private Dictionary<string, int> dict = new Dictionary<string, int>();
 
-        private  String[] mots = new String[]{
+        public struct test
+        {
+            public String mot;
+            public int index;
+        }
+
+        private  String[] mots = new string[]{
 
             // Allumer
             "allumer",
@@ -45,6 +51,38 @@ namespace JackBot
             "resumer",
             "resume",
 
+            // Tele
+            "television",
+            "TV"
+
+
+        };
+
+        private test[] assoc = new test[]{
+
+            // Allumer
+            new test{mot = "allumer", index = 1},
+            new test{mot = "allume", index = 1},
+
+            // Eteindre
+            new test{mot = "eteindre", index = 2},
+            new test{mot = "eteins", index = 2},
+
+            // Mettre
+            
+            new test{mot = "mettre", index = 3},
+            new test{mot = "mets", index = 3},
+
+            // Être
+            new test{mot = "etre", index = 4},
+
+            // Résumé
+            new test{mot = "resumer", index = 5},
+
+            // Tele
+            new test{mot = "television", index = 6},
+            new test{mot = "TV", index = 6},
+
 
         };
 
@@ -55,13 +93,11 @@ namespace JackBot
 
         private void implementDic()
         {
-            int i = 1;
-            foreach (String m in this.mots)
+            foreach (test m in this.assoc)
             {
                 try
                 {
-                    this.dict.Add(m, i);
-                    i++;
+                    this.dict.Add(m.mot, m.index);
                 }
                 catch(Exception e) { }
             }
