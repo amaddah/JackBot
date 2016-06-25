@@ -9,6 +9,7 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 
 namespace JackBot
 {
@@ -22,41 +23,19 @@ namespace JackBot
         /// 
         private Dictionary<string, int> dict = new Dictionary<string, int>();
 
+        private Dictionary<int, string> dictCom = new Dictionary<int, string>();
+
         public struct test
         {
             public String mot;
             public int index;
         }
 
-        private  String[] mots = new string[]{
-
-            // Allumer
-            "allumer",
-            "allume",
-
-            // Eteindre
-            "eteindre",
-            "eteins",
-
-            // Mettre
-            "mettre",
-            "mets",
-
-
-            // Être
-            "etre",
-            "est",
-
-            // Résumé
-            "resumer",
-            "resume",
-
-            // Tele
-            "television",
-            "TV"
-
-
-        };
+        public struct testFunction
+        {
+            public int index;
+            public string message;
+        }
 
         private test[] assoc = new test[]{
 
@@ -70,25 +49,34 @@ namespace JackBot
 
             // Mettre
             
-            new test{mot = "mettre", index = 3},
-            new test{mot = "mets", index = 3},
+            new test{mot = "mettre", index = 4},
+            new test{mot = "mets", index = 4},
 
             // Être
-            new test{mot = "etre", index = 4},
+            new test{mot = "etre", index = 8},
 
             // Résumé
-            new test{mot = "resumer", index = 5},
+            new test{mot = "resumer", index = 16},
 
             // Tele
-            new test{mot = "television", index = 6},
-            new test{mot = "TV", index = 6},
+            new test{mot = "television", index = 32},
+            new test{mot = "TV", index = 32},
+            new test{mot = "tv", index = 32},
 
 
+        };
+
+        private testFunction[] assocFunc = new testFunction[]{
+
+            // Télévision
+            new testFunction{index = 33, message = "J'ai allumé la television"},
+            new testFunction{index = 34, message = "J'ai éteins la television"}
         };
 
         MessagesController()
         {
             this.implementDic();
+            this.implementDicCom();
         }
 
         private void implementDic()
@@ -103,6 +91,18 @@ namespace JackBot
             }
         }
 
+        private void implementDicCom()
+        {
+            foreach (testFunction m in this.assocFunc)
+            {
+                try
+                {
+                    this.dictCom.Add(m.index, m.message);
+                }
+                catch (Exception e) { }
+            }
+        }
+
         public async Task<Message> Post([FromBody]Message message)
         {
             //implementDict(this.mots);
@@ -113,12 +113,17 @@ namespace JackBot
                 String[] test = message.Text.Split(' ');
                 Message reply = message.CreateReplyMessage();
                 reply.Type = "Message";
-                
-                foreach(String t in test)
+                int reponse = 0;
+                foreach (String t in test)
                 {
+                    //String commande = t.ToLower();
                     if (dict.ContainsKey(t))
-                        reply.Text += "[Trouvé = {" + dict[t] + "}]";
+                        reponse += dict[t];
                 }
+                if (dictCom.ContainsKey(reponse))
+                    reply.Text += dictCom[reponse];
+                else
+                    reply.Text += "[index=" + reponse + "] Rien trouver";
                 return reply;
             }
             else
