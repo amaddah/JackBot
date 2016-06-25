@@ -10,6 +10,8 @@ using Microsoft.Bot.Connector.Utilities;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.Text;
+using System.Globalization;
 
 namespace JackBot
 {
@@ -60,7 +62,6 @@ namespace JackBot
 
             // Tele
             new test{mot = "television", index = 32},
-            new test{mot = "TV", index = 32},
             new test{mot = "tv", index = 32},
 
 
@@ -69,8 +70,8 @@ namespace JackBot
         private testFunction[] assocFunc = new testFunction[]{
 
             // Télévision
-            new testFunction{index = 33, message = "J'ai allumé la television"},
-            new testFunction{index = 34, message = "J'ai éteins la television"}
+            new testFunction{index = 33, message = "J'ai allumé la télévision."},
+            new testFunction{index = 34, message = "J'ai éteins la télévision"}
         };
 
         MessagesController()
@@ -103,6 +104,23 @@ namespace JackBot
             }
         }
 
+        static string getCommande(string t)
+        {
+            string text = t.ToLower();
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
         public async Task<Message> Post([FromBody]Message message)
         {
             //implementDict(this.mots);
@@ -114,16 +132,17 @@ namespace JackBot
                 Message reply = message.CreateReplyMessage();
                 reply.Type = "Message";
                 int reponse = 0;
-                foreach (String t in test)
+                foreach (string t in test)
                 {
-                    //String commande = t.ToLower();
-                    if (dict.ContainsKey(t))
-                        reponse += dict[t];
+                    string commande = getCommande(t);
+                    if (dict.ContainsKey(commande))
+                        reponse += dict[commande];
                 }
                 if (dictCom.ContainsKey(reponse))
                     reply.Text += dictCom[reponse];
                 else
                     reply.Text += "[index=" + reponse + "] Rien trouver";
+
                 return reply;
             }
             else
