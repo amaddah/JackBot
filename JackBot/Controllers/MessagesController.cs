@@ -20,7 +20,7 @@ namespace JackBot
         /// Receive a message from a user and reply to it
         /// </summary>
         /// 
-        private Dictionary<int, string> dict = new Dictionary<int, string>();
+        private Dictionary<string, int> dict = new Dictionary<string, int>();
 
         private  String[] mots = new String[]{
 
@@ -60,7 +60,7 @@ namespace JackBot
             {
                 try
                 {
-                    this.dict.Add(i, m);
+                    this.dict.Add(m, i);
                     i++;
                 }
                 catch(Exception e) { }
@@ -80,8 +80,8 @@ namespace JackBot
                 
                 foreach(String t in test)
                 {
-                    if (dict.ContainsValue(t))
-                        reply.Text += "[Trouvé = {" + t + "}]";
+                    if (dict.ContainsKey(t))
+                        reply.Text += "[Trouvé = {" + dict[t] + "}]";
                 }
                 return reply;
             }
