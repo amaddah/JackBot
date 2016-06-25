@@ -20,9 +20,9 @@ namespace JackBot
         /// Receive a message from a user and reply to it
         /// </summary>
         /// 
-        private Dictionary<int, string> dict;
+        private Dictionary<int, string> dict = new Dictionary<int, string>();
 
-        private  String[] mots = {
+        private  String[] mots = new String[]{
 
             // Allumer
             "allumer",
@@ -48,19 +48,27 @@ namespace JackBot
 
         };
 
-        private void implementDict()
+        MessagesController()
+        {
+            this.implementDic();
+        }
+
+        private void implementDic()
         {
             int i = 1;
-            foreach (String m in this.mots) {
-                Console.WriteLine(m);
-                //this.dict.Add(i, m);
-                i++;
-             }
+            foreach (String m in this.mots)
+            {
+                try
+                {
+                    this.dict.Add(i, m);
+                    i++;
+                }
+                catch(Exception e) { }
+            }
         }
 
         public async Task<Message> Post([FromBody]Message message)
         {
-            implementDict();
             //implementDict(this.mots);
             if (message.Type == "Message")
             {
@@ -70,13 +78,11 @@ namespace JackBot
                 Message reply = message.CreateReplyMessage();
                 reply.Type = "Message";
                 
-                //foreach(String t in test)
-                //{
-                //    if (dict.ContainsValue(t))
-                //        reply.Text = "[Trouvé = {" + t + "}]";
-                //}
-                //reply.Text += "[" + t + "]";
-                reply.Text = "https://google.com";
+                foreach(String t in test)
+                {
+                    if (dict.ContainsValue(t))
+                        reply.Text += "[Trouvé = {" + t + "}]";
+                }
                 return reply;
             }
             else
