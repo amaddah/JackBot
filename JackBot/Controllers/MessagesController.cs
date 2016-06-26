@@ -67,13 +67,6 @@ namespace JackBot
 
         };
 
-        private testFunction[] assocFunc = new testFunction[]{
-
-            // Télévision
-            new testFunction{index = 33, message = "J'ai allumé la télévision."},
-            new testFunction{index = 34, message = "J'ai éteins la télévision"}
-        };
-
         MessagesController()
         {
             this.implementDic();
@@ -101,6 +94,20 @@ namespace JackBot
                     this.dictCom.Add(m.index, m.message);
                 }
                 catch (Exception e) { }
+            }
+        }
+
+        static string getReponse(int index)
+        {
+            
+            switch (index)
+            {
+                case 33:
+                    return "J'ai allumé la télévision.";
+                case 34:
+                    return "J'ai éteins la télévision";
+                default:
+                    return "Désolé je ne peut pas répondre à cette demande ou je ne la comprend pas";
             }
         }
 
@@ -138,11 +145,12 @@ namespace JackBot
                     if (dict.ContainsKey(commande))
                         reponse += dict[commande];
                 }
-                if (dictCom.ContainsKey(reponse))
+                reply.Text += "[index=" + reponse +"] " + getReponse(reponse);
+                /*if (dictCom.ContainsKey(reponse))
                     reply.Text += dictCom[reponse];
                 else
                     reply.Text += "[index=" + reponse + "] Rien trouver";
-
+                    */
                 return reply;
             }
             else
