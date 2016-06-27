@@ -87,9 +87,9 @@ namespace JackBot
                 case 33:
                     return "J'ai allumé la télévision.";
                 case 34:
-                    return "J'ai éteins la télévision";
+                    return "J'ai éteint la télévision";
                 default:
-                    return "Désolé je ne peut pas répondre à cette demande ou je ne la comprend pas";
+                    return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
             }
         }
 
