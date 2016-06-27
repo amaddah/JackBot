@@ -33,12 +33,6 @@ namespace JackBot
             public int index;
         }
 
-        public struct testFunction
-        {
-            public int index;
-            public string message;
-        }
-
         private test[] assoc = new test[]{
 
             // Allumer
@@ -70,7 +64,6 @@ namespace JackBot
         MessagesController()
         {
             this.implementDic();
-            this.implementDicCom();
         }
 
         private void implementDic()
@@ -85,17 +78,6 @@ namespace JackBot
             }
         }
 
-        private void implementDicCom()
-        {
-            foreach (testFunction m in this.assocFunc)
-            {
-                try
-                {
-                    this.dictCom.Add(m.index, m.message);
-                }
-                catch (Exception e) { }
-            }
-        }
 
         static string getReponse(int index)
         {
@@ -105,9 +87,9 @@ namespace JackBot
                 case 33:
                     return "J'ai allumé la télévision.";
                 case 34:
-                    return "J'ai éteins la télévision";
+                    return "J'ai éteint la télévision";
                 default:
-                    return "Désolé je ne peut pas répondre à cette demande ou je ne la comprend pas";
+                    return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
             }
         }
 
@@ -128,13 +110,11 @@ namespace JackBot
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
+
         public async Task<Message> Post([FromBody]Message message)
         {
-            //implementDict(this.mots);
             if (message.Type == "Message")
             {
-                //int length = (message.Text ?? string.Empty).Length;
-                //return message.CreateReplyMessage($"[Yoann] Tu as envoyé {length} caractères");
                 String[] test = message.Text.Split(' ');
                 Message reply = message.CreateReplyMessage();
                 reply.Type = "Message";
@@ -146,11 +126,6 @@ namespace JackBot
                         reponse += dict[commande];
                 }
                 reply.Text += "[index=" + reponse +"] " + getReponse(reponse);
-                /*if (dictCom.ContainsKey(reponse))
-                    reply.Text += dictCom[reponse];
-                else
-                    reply.Text += "[index=" + reponse + "] Rien trouver";
-                    */
                 return reply;
             }
             else
