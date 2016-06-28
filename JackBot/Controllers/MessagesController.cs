@@ -27,8 +27,8 @@ namespace JackBot
 
         private Dictionary<int, string> dictCom = new Dictionary<int, string>();
 
-        private bool PropositionRegarderEmision = false;
-        private bool PropositionDiscusion = false;
+        private static bool PropositionRegarderEmision = false;
+        private static bool PropositionDiscusion = false;
 
         public struct test
         {
@@ -47,7 +47,6 @@ namespace JackBot
             new test{mot = "eteins", index = 2},
 
             // Mettre
-            
             new test{mot = "mettre", index = 4},
             new test{mot = "mets", index = 4},
 
@@ -68,6 +67,7 @@ namespace JackBot
             new test {mot = "documentaire", index = 128 },
 
             //agriculture
+            new test {mot = "l'agriculture", index = 256 },
             new test {mot = "agriculture", index = 256 },
 
             //aquiessement
@@ -109,17 +109,19 @@ namespace JackBot
                 case 448:
                     {
                         PropositionRegarderEmision = true;
-                        return "Salut, je te propose \"TheLastFarme\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
+                        return "Salut, je te propose \"TheLastFarmer\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
                     }
                 case 512:
                     {
-                        if (PropositionRegarderEmision)
+                        if(PropositionRegarderEmision)
                         {
-
+                            PropositionRegarderEmision = false;
+                            PropositionDiscusion = true;
                             return "Il est diffusé en ce moment en français. Souhaites-tu discuter avec des personnes qui regardent le documentaire ?";
                         }
-                        else if (PropositionDiscusion)
+                        else if(PropositionDiscusion)
                         {
+                            PropositionDiscusion = false;
                             return " Voilà le lien pour échanger en direct sur le documentaire avec des gens du monde entier : https://www.twitch.tv/superchaine/v/thelastfarmer";
                         }
                         else
@@ -162,7 +164,7 @@ namespace JackBot
                     if (dict.ContainsKey(commande))
                         reponse += dict[commande];
                 }
-                reply.Text += "[index=" + reponse +"] " + getReponse(reponse);
+                reply.Text += getReponse(reponse);
                 return reply;
             }
             else
