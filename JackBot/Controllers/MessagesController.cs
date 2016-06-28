@@ -109,7 +109,7 @@ namespace JackBot
                 case 448:
                     {
                         PropositionRegarderEmision = true;
-                        return "Salut, je te propose \"TheLastFarmer\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
+                        return "Salut, je te propose \"TheLastFarmer\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veux-tu le regarder?";
                     }
                 case 512:
                     {
