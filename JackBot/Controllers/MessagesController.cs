@@ -32,6 +32,7 @@ namespace JackBot
             public String mot;
             public int index;
         }
+        public bool PropositionRegarderEmision = false;
 
         private test[] assoc = new test[]{
 
@@ -57,6 +58,21 @@ namespace JackBot
             // Tele
             new test{mot = "television", index = 32},
             new test{mot = "tv", index = 32},
+
+            //montrer
+            new test {mot = "montrer", index = 64 },
+
+            //documentaire
+            new test {mot = "documentaire", index = 128 },
+
+            //agriculture
+            new test {mot = "agriculture", index = 256 },
+
+            //oui
+            new test {mot = "oui", index = 512 },
+
+            //ok
+            new test {mot = "ok", index = 1024 }
 
 
         };
@@ -88,6 +104,9 @@ namespace JackBot
                     return "J'ai allumé la télévision.";
                 case 34:
                     return "J'ai éteint la télévision";
+                case 448:
+                    PropositionRegarderEmision = true;
+                    return "Salut, je te propose \"TheLastFarme\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
                 default:
                     return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
             }
