@@ -27,12 +27,14 @@ namespace JackBot
 
         private Dictionary<int, string> dictCom = new Dictionary<int, string>();
 
+        private bool PropositionRegarderEmision = false;
+        private bool PropositionDiscusion = false;
+
         public struct test
         {
             public String mot;
             public int index;
         }
-        public bool PropositionRegarderEmision = false;
 
         private test[] assoc = new test[]{
 
@@ -68,11 +70,11 @@ namespace JackBot
             //agriculture
             new test {mot = "agriculture", index = 256 },
 
-            //oui
+            //aquiessement
             new test {mot = "oui", index = 512 },
+            new test {mot = "ok", index = 512 }
 
-            //ok
-            new test {mot = "ok", index = 1024 }
+            
 
 
         };
@@ -95,7 +97,7 @@ namespace JackBot
         }
 
 
-        static string getReponse(int index)
+        private string getReponse(int index)
         {
             
             switch (index)
@@ -105,8 +107,24 @@ namespace JackBot
                 case 34:
                     return "J'ai éteint la télévision";
                 case 448:
-                    PropositionRegarderEmision = true;
-                    return "Salut, je te propose \"TheLastFarme\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
+                    {
+                        PropositionRegarderEmision = true;
+                        return "Salut, je te propose \"TheLastFarme\" un documentaire qui explore les conséquences dramatiques du néoliberalisme et sur la vie des petits paysans sur Terre. Veut-tu le regarder?";
+                    }
+                case 512:
+                    {
+                        if (PropositionRegarderEmision)
+                        {
+
+                            return "Il est diffusé en ce moment en français. Souhaites-tu discuter avec des personnes qui regardent le documentaire ?";
+                        }
+                        else if (PropositionDiscusion)
+                        {
+                            return " Voilà le lien pour échanger en direct sur le documentaire avec des gens du monde entier : https://www.twitch.tv/superchaine/v/thelastfarmer";
+                        }
+                        else
+                            return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
+                    }
                 default:
                     return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
             }
