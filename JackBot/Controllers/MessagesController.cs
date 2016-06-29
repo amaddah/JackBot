@@ -179,7 +179,6 @@ namespace JackBot
             {
                 Message reply = message.CreateReplyMessage();
                 reply.Type = "Ping";
-                reply.Text = "Cc";
                 return reply;
             }
             else if (message.Type == "DeleteUserData")
