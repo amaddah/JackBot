@@ -27,6 +27,11 @@ namespace JackBot
 
         private Dictionary<int, string> dictCom = new Dictionary<int, string>();
 
+        //stockage nom entity
+        private static HashSet<String> name_entity = new HashSet<String>();
+        private static HashSet<String> name_tag = new HashSet<String>();
+
+        //Stockage des question précédente
         private static bool PropositionRegarderEmision = false;
         private static bool PropositionDiscusion = false;
 
@@ -52,6 +57,8 @@ namespace JackBot
 
             // Être
             new test{mot = "etre", index = 8},
+            new test {mot = "est", index = 8 },
+            new test {mot = "qu'est", index = 8 },
 
             // Résumé
             new test{mot = "resumer", index = 16},
@@ -72,10 +79,28 @@ namespace JackBot
 
             //aquiessement
             new test {mot = "oui", index = 512 },
-            new test {mot = "ok", index = 512 }
+            new test {mot = "ok", index = 512 },
 
+            //salutation
+            new test {mot = "bonjour", index = 1024 },
+            new test {mot = "salut", index = 1024 },
+
+            //aujourd'hui
+            new test {mot = "aujourd'hui", index = 2048 },
+
+            //Nom chaine
+            new test {mot = "channel", index = 4096 },
+            new test {mot = "documentaria", index = 4096 },
+
+            //Avoir
+            new test {mot = "avoir", index = 8192 },
             
+            //Replay
+            new test {mot = "replay", index = 16384 },
 
+            //Envoyer
+            new test {mot = "envoyer", index = 32768 },
+            new test {mot = "l'envoyer", index = 32768 },
 
         };
 
@@ -96,6 +121,42 @@ namespace JackBot
             }
         }
 
+        private int detectTag(string t, Message reply)
+        {
+            int rep;
+            int taille_entity = name_entity.Count;
+            int taille_tag = name_entity.Count;
+            String name = t.Substring(1);
+            switch (t[0])
+            {
+                case '#':
+                    {
+                        if (dict.ContainsKey(name))
+                        {
+                            name_tag.Add(name);
+                            rep = dict[name];
+                        }
+                        else
+                        {
+                            reply.Text = "Vous vous êtes trompée de chaîne ou chaîne introuvable.";
+                            rep = -1;
+                        }
+                        break;
+                    }
+                case '@':
+                    {
+                        rep = 0;
+                        name_entity.Add(name);
+                        break;
+                    }
+                default:
+                    {
+                        rep = 0;
+                        break;
+                    }
+            }
+            return rep;
+        }
 
         private string getReponse(int index)
         {
@@ -122,14 +183,74 @@ namespace JackBot
                         else if(PropositionDiscusion)
                         {
                             PropositionDiscusion = false;
-                            return " Voilà le lien pour échanger en direct sur le documentaire avec des gens du monde entier : https://www.twitch.tv/superchaine/v/thelastfarmer";
+                            return " Voilà le lien pour échanger en direct sur le documentaire avec des gens du monde entier : https://www.twitch.tv/superchaine/v/Latêtesousl’eau ";
                         }
                         else
-                            return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
+                            return "Désolé, je ne comprends pas votre commande.";
+                    }
+                case 7176:
+                    {
+                        String rep = "Bonjour, Jackbot à votre service." + Environment.NewLine +"Voici le programme de la soirée : " + Environment.NewLine;
+                        rep += getProgramm(DateTime.Now.ToString("M/d/yyyy"));
+                        return rep;
+                    }
+                case 24576:
+                    {
+                        String rep = "Le voici : ";
+                        rep += getReplay("0");
+                        return rep;
+                    }
+                case 32768:
+                    {
+                        String rep = "Voilà c'est envoyé à Marion DuPont";
+                        rep += "Je te propose également de voir ces trois documentaires traitant de la même thématique :";
+                        rep += Environment.NewLine + "- @Les Dents de la mer : " + getReplay("1");
+                        rep += Environment.NewLine + "- @La mer avant tout : " + getReplay("2");
+                        rep += Environment.NewLine + "- @La mère mer : " + getReplay("3");
+                        rep += Environment.NewLine + "Des fan de l'émission ont créé une conversation publique sur la tête sous l'eau souhaitez vous la rejoindre?";
+                        PropositionDiscusion = true;
+                        return rep;
                     }
                 default:
-                    return "Désolé je ne peux pas répondre à cette demande ou je ne la comprends pas";
+                    return "Désolé, je ne comprends pas votre commande.";
             }
+        }
+
+        private string getReplay(String t)
+        {
+            String p = "http://channel.hackateam.com/replay/";
+            switch (t)
+            {
+                case "0":
+                    p += "971ec5dbf48d9e70f2475a5c586a45ab10e38e65e2a2118c7cf8468894ed1a11";
+                    break;
+                case "1":
+                    p += "28fbe199093d46f0bd5d0216cd20768451114bfc3e2b47be14ca9a52fde6f537";
+                    break;
+                case "2":
+                    p += "da570095254b3b3d1a3ef02451af9016b97afcb6018c788929eebb4f766c57e3";
+                    break;
+                case "3":
+                    p += "d861f7949af91e3b8746a8d279f11655f83375aa0d35452707e49fe3729ee82f";
+                    break;
+                default:
+                    return "Aucun lien disponible.";
+            }
+            return p;
+        }
+
+        private string getProgramm(string v)
+        {
+            String[] datas = v.Split('/');
+            int jour = Int32.Parse(datas[0]);
+            int mois = Int32.Parse(datas[1]);
+            long annee = Int64.Parse(datas[2]);
+
+            String query = ""; // Plus tard
+
+            return "- 20:00 : @Latêtesousl’eau" + Environment.NewLine +
+                "- 21:50 : @LaMerEtLaNature.";
+
         }
 
         static string getCommande(string t)
@@ -161,10 +282,13 @@ namespace JackBot
                 foreach (string t in test)
                 {
                     string commande = getCommande(t);
+                    int tag_num = detectTag(commande, reply);
+                    if (tag_num == -1) return reply;
+                    reponse += tag_num;                    
                     if (dict.ContainsKey(commande))
-                        reponse += dict[commande];
+                        reponse += dict[commande] ;
                 }
-                reply.Text += getReponse(reponse);
+                reply.Text = getReponse(reponse);
                 return reply;
             }
             else
